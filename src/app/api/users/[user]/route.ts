@@ -48,10 +48,10 @@ export async function PUT(request: NextRequest, {  params }: { params: { user: s
 }
 
 // DELETE USER
-export async function DELETE( { params }: { params: { id: string } }) {
+export async function DELETE( request: NextRequest, { params }: { params: { user: string } }) {
   try {
     await connectDB();
-    const { id } = params;
+   const { user: id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
