@@ -6,7 +6,7 @@
   "scripts": {
     "build:widget": "node build-widget.js",
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+  "build": "npm run build:widget && next build --turbopack",
     "start": "next start",
     "lint": "eslint"
   },

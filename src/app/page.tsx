@@ -97,15 +97,17 @@ export default function Home() {
 
               <div className="mx-auto mb-32 max-w-5xl px-6 lg:px-8 mt-[5rem]">
                 <div className="-m-2 rounded-xl  bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-   <video
-  src="/JunoDemo.mp4"
-  className="lg:w-[70rem] w-[100%] lg:h-[40vh] h-full"
-  autoPlay
-  loop
-  muted
-  playsInline
-  preload="auto"
-/>
+ <div className="w-full aspect-video">
+    <video
+      src="/JunoDemo.mp4"
+      className="w-full h-full object-cover rounded-xl"
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="auto"
+    />
+  </div>
 
 
                 </div>
