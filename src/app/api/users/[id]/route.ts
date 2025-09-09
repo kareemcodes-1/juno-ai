@@ -4,12 +4,15 @@ import User from "@/models/User";
 import connectDB from "@/config/connectDB";
 
 // UPDATE USER
-export async function PUT(request: NextRequest, {  params }: { params: { user: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
-    const { user: id } = params;
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -23,7 +26,10 @@ export async function PUT(request: NextRequest, {  params }: { params: { user: s
     // Optional password update
     if (newPassword) {
       if (!currentPassword) {
-        return NextResponse.json({ error: "Current password is required to change password" }, { status: 400 });
+        return NextResponse.json(
+          { error: "Current password is required to change password" },
+          { status: 400 }
+        );
       }
 
       const passwordMatch = await bcrypt.compare(currentPassword, user.password);
@@ -48,10 +54,13 @@ export async function PUT(request: NextRequest, {  params }: { params: { user: s
 }
 
 // DELETE USER
-export async function DELETE( request: NextRequest, { params }: { params: { user: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
-   const { user: id } = params;
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
