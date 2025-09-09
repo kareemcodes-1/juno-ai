@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import ToastProvider from "./providers/toast-provider";
+import AuthProvider from "./providers/provider";
+import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Lumina - AI Powered Image Editor",
-  description: "Upload, transform, and optimize your images with AI-powered tools. Resize, crop, remove backgrounds, and more with AI transformations.",
+  title: "Juno AI Agent for your business",
+  description:
+    "Upload, transform, and optimize your images with AI-powered tools. Resize, crop, remove backgrounds, and more with AI transformations.",
 };
 
 export default function RootLayout({
@@ -14,10 +17,29 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={` antialiased`}
-      >
-        {children}
+      <body className={` antialiased`}>
+        {" "}
+        <ToastProvider />
+        <AuthProvider>
+                    {children}
+        </AuthProvider>
+
+         <Script
+                id="chat-widget"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    (function(){
+                      var script = document.createElement("script");
+                      script.src = "http://localhost:3000/widget.js"; // your widget bundle
+                      script.async = true;
+                      script.setAttribute("data-workspace-url", "test-url");
+                       script.setAttribute("data-agent-id", "68bd73787e4cf74e0c293906");
+                       document.body.appendChild(script);
+                    })();
+                  `,
+                }}
+              />
       </body>
     </html>
   );
