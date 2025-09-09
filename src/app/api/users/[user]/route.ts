@@ -4,12 +4,12 @@ import User from "@/models/User";
 import connectDB from "@/config/connectDB";
 
 // UPDATE USER
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, {  params }: { params: { user: string } }) {
   try {
     await connectDB();
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
-    const { id } = params;
+    const { user: id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -48,7 +48,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 // DELETE USER
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE( { params }: { params: { id: string } }) {
   try {
     await connectDB();
     const { id } = params;
