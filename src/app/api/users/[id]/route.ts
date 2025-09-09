@@ -6,13 +6,14 @@ import connectDB from "@/config/connectDB";
 // UPDATE USER
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
+    const { id } = await context.params;
+
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
-    const { id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -23,7 +24,6 @@ export async function PUT(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Optional password update
     if (newPassword) {
       if (!currentPassword) {
         return NextResponse.json(
@@ -40,7 +40,6 @@ export async function PUT(
       user.password = await bcrypt.hash(newPassword, 10);
     }
 
-    // Update name/email if provided
     if (name) user.name = name;
     if (email) user.email = email;
 
@@ -56,11 +55,11 @@ export async function PUT(
 // DELETE USER
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await context.params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });

@@ -1,15 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import connectDB from "@/config/connectDB";
 import Workspace from "@/models/Workspace";
 
 // GET a single workspace
 export async function GET(
-  req: Request,
-  { params }: { params: { workspace: string } }
+  req: NextRequest,
+  context: { params: Promise<{ workspace: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = await params;
+    const { workspace: workspaceSlug } = await context.params;
+
     const workspace = await Workspace.findOne({ url: workspaceSlug });
 
     if (!workspace) {
@@ -24,12 +25,13 @@ export async function GET(
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { workspace: string } }
+  req: NextRequest,
+  context: { params: Promise<{ workspace: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = params;
+    const { workspace: workspaceSlug } = await context.params;
+
     const workspace = await Workspace.findOne({ url: workspaceSlug });
 
     if (!workspace) {
@@ -52,14 +54,15 @@ export async function PATCH(
   }
 }
 
-// DELETE a workspace
+// DELETE
 export async function DELETE(
-  req: Request,
-  { params }: { params: { workspace: string } }
+  req: NextRequest,
+  context: { params: Promise<{ workspace: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = params;
+    const { workspace: workspaceSlug } = await context.params;
+
     const workspace = await Workspace.findOne({ url: workspaceSlug });
 
     if (!workspace) {
@@ -75,7 +78,7 @@ export async function DELETE(
   }
 }
 
-// OPTIONS for CORS
+// OPTIONS
 export async function OPTIONS() {
   return new NextResponse(null, {
     status: 204,
