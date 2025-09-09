@@ -2,22 +2,22 @@ import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import connectDB from "@/config/connectDB";
 import Agent from "@/models/Agent";
-import User from "@/models/User"; 
 import Chat from "@/models/Chat";
 import Lead from "@/models/Lead";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-function withCORS(json: any, status = 200) {
+function withCORS<T>(json: T, status = 200) {
   return NextResponse.json(json, {
     status,
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });
 }
+
 
 // Role-based templates
 const roleInstructions: Record<string, string> = {

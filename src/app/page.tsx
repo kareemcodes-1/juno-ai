@@ -1,18 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
-import { TypeAnimation } from "react-type-animation";
 import toast from "react-hot-toast";
 
 import { Navbar } from "@/components/navbar";
 import { Workspace } from "../../types";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import Script from "next/script";
 import HeroText from "../components/hero-text"
 
 export default function Home() {

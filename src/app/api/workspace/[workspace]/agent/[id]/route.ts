@@ -3,7 +3,7 @@ import Agent from "@/models/Agent";
 import Workspace from "@/models/Workspace";
 import { NextResponse } from "next/server";
 
-function withCORS(json: any, status = 200) {
+function withCORS<T>(json: T, status = 200) {
   return NextResponse.json(json, {
     status,
     headers: {
@@ -13,6 +13,7 @@ function withCORS(json: any, status = 200) {
     },
   });
 }
+
 
 
 // GET single agent

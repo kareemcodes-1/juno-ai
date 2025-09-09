@@ -1,7 +1,7 @@
-import { Types } from "mongoose";
-import { User } from "../../../types/index"
+import { User } from "../../../types";
 
-async function updateUser(_id: string, data: any){
+
+async function updateUser(_id: string, data: User){
     const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/users/user`, {
         method: "PUT",
         headers: {
