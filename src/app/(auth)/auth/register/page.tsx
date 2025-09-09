@@ -2,7 +2,6 @@
 import { useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
 import { registerUser } from "@/actions/registerUser";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";

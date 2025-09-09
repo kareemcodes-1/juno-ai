@@ -31,7 +31,7 @@ export default function HeroText() {
     }, 2500); // change every 2.5s
 
     return () => clearInterval(interval);
-  }, []);
+  }, [words.length]);
 
   return (
     <span ref={wordRef} className="inline-block text-blue-600">

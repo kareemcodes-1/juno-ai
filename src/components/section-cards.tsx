@@ -48,7 +48,6 @@ export function SectionCards({ workspace }: { workspace: string }) {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [deleteAgentId, setDeleteAgentId] = useState<string | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
   const [openEmbed, setOpenEmbed] = useState<boolean>(false);

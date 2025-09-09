@@ -6,22 +6,17 @@ interface MongooseCache {
   promise: Promise<Mongoose> | null;
 }
 
+// Extend the global object to include `mongoose` cache
 declare global {
-  namespace NodeJS {
-    interface Global {
-      mongoose: MongooseCache;
-    }
-  }
-
-  var mongoose: MongooseCache;
+  // This augments the globalThis object in Node.js
+  var mongoose: MongooseCache | undefined;
 }
 
-
-// Use a globally cached connection in dev (or redefine per env if needed)
-let cached = global.mongoose;
+// Use a globally cached connection (helpful in dev mode)
+let cached = globalThis.mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = globalThis.mongoose = { conn: null, promise: null };
 }
 
 async function connectDB(): Promise<Mongoose> {
@@ -31,28 +26,28 @@ async function connectDB(): Promise<Mongoose> {
     throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
   }
 
-  if (cached.conn) {
-    return cached.conn;
+  if (cached!.conn) {
+    return cached!.conn;
   }
 
-  if (!cached.promise) {
+  if (!cached!.promise) {
     const opts = {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
+    cached!.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
   }
 
   try {
-    cached.conn = await cached.promise;
+    cached!.conn = await cached!.promise;
     console.log("✅ MongoDB connection successful");
   } catch (e) {
-    cached.promise = null;
+    cached!.promise = null;
     console.error("❌ MongoDB connection error:", e);
     throw e;
   }
 
-  return cached.conn;
+  return cached!.conn;
 }
 
 export default connectDB;
