@@ -1,37 +1,48 @@
-import mongoose from "mongoose";
-declare global {
-  var mongoose: any; // This must be a `var` and not a `let / const`
+import mongoose, { Mongoose } from "mongoose";
+
+// Define interface for cached connection
+interface MongooseCache {
+  conn: Mongoose | null;
+  promise: Promise<Mongoose> | null;
 }
 
+declare global {
+  namespace NodeJS {
+    interface Global {
+      mongoose: MongooseCache;
+    }
+  }
+
+  var mongoose: MongooseCache;
+}
+
+
+// Use a globally cached connection in dev (or redefine per env if needed)
 let cached = global.mongoose;
 
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function connectDB() {
+async function connectDB(): Promise<Mongoose> {
   const MONGODB_URI = process.env.MONGODB_URI;
 
-
   if (!MONGODB_URI) {
-    throw new Error(
-      "Please define the MONGODB_URI environment variable inside .env.local",
-    );
+    throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
   }
 
   if (cached.conn) {
     return cached.conn;
   }
+
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
     };
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => mongoose);
   }
+
   try {
     cached.conn = await cached.promise;
     console.log("✅ MongoDB connection successful");

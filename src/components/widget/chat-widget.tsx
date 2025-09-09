@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Bot, Mail, MessageCircle, MessageSquare, X } from "lucide-react";
+import Image from "next/image";
 
 type Message = {
   role: "user" | "bot";
@@ -20,8 +21,6 @@ type ChatWidgetProps = {
 };
 
 const ChatWidget = ({
-  name,
-  role,
   label,
   placeholder,
   accentColor,
@@ -83,8 +82,11 @@ const ChatWidget = ({
           >
             <div className="flex items-center gap-2">
               {logo && (
-                <img
+                <Image
                   src={logo}
+                  width={500}
+                  height={500}
+                  quality={100}
                   alt="Agent Logo"
                   className="w-7 h-7 rounded-full border"
                 />
@@ -108,7 +110,10 @@ const ChatWidget = ({
                 {m.role === "bot" && (
                   <>
                     {logo ? (
-                      <img
+                      <Image
+                      width={500}
+                      height={500}
+                      quality={100}
                         src={logo}
                         alt="Bot Avatar"
                         className="w-6 h-6 rounded-full"

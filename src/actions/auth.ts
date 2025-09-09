@@ -1,4 +1,4 @@
-import connectDB from "@/config/connectDB";
+
 import { User } from "../../types";
 
 export async function registerUser(userInfo: User) {

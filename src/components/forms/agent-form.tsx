@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { MessageSquare, Bot, Mail, MessageCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import ChatWidget from "../widget/chat-widget";
+import Image from "next/image";
 
 type AgentFormProps = {
   id?: string;
@@ -175,7 +176,7 @@ export default function AgentForm({ id }: AgentFormProps) {
         <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
         <Button onClick={triggerFilePicker} className="w-[10rem]">Upload Logo</Button>
         {logoFile &&  <Button variant={'destructive'} onClick={() => setLogoFile(null)} className="w-[10rem]">Remove</Button>}
-        {logoFile && <img src={logoFile} alt="logo" className="w-20 h-20 mt-2 rounded-full" />}
+        {logoFile && <Image width={500} height={500} quality={100} src={logoFile} alt="logo" className="w-20 h-20 mt-2 rounded-full" />}
 
       </div>
       <div className="flex flex-col gap-[.5rem]">

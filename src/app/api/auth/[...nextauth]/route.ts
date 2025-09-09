@@ -1,14 +1,9 @@
-import NextAuth, {
-  SessionStrategy,
-  type AuthOptions,
-  type Session,
-  type User as NextAuthUser,
-} from "next-auth";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import connectDB from "@/config/connectDB";
 import User from "@/models/User";
-import type { JWT } from "next-auth/jwt";
+import type { AuthOptions } from "next-auth";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -21,19 +16,17 @@ export const authOptions: AuthOptions = {
       async authorize(credentials) {
         await connectDB();
 
-        if (!credentials?.email || !credentials?.password) {
+        const { email, password } = credentials ?? {};
+        if (!email || !password) {
           throw new Error("Email and password are required.");
         }
 
-        const user = await User.findOne({ email: credentials.email }).exec();
-        if (!user) {
+        const user = await User.findOne({ email }).exec();
+        if (!user || !user.password) {
           throw new Error("Invalid email or password.");
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
           throw new Error("Invalid email or password.");
         }
@@ -47,7 +40,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
   session: {
-    strategy: "jwt" as SessionStrategy,
+    strategy: "jwt",
   },
   pages: {
     signIn: "/login",
@@ -55,30 +48,26 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, trigger, session }) {
-      // Initial sign-in
       if (user) {
         token.id = user.id;
-        token.name = (user as any).name;
+        token.name = user.name!;
         token.email = user.email!;
       }
 
-      // When session.update() is called
-      if (trigger === "update" && session) {
-        token.name = session.name;
-        token.email = session.email;
+      if (trigger === "update" && session?.user) {
+        token.name = session.user.name;
+        token.email = session.user.email;
       }
 
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (token) {
-        session.user = {
-          id: token.id as string,
-          email: token.email as string,
-          name: (token as any).name,
-        };
-      }
+    async session({ session, token }) {
+      session.user = {
+        id: token.id,
+        email: token.email,
+        name: token.name,
+      };
       return session;
     },
   },
