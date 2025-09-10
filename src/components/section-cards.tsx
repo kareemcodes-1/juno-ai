@@ -150,6 +150,7 @@ export function SectionCards({ workspace }: { workspace: string }) {
     s.async = true;
     s.setAttribute("data-workspace-url", "${workspace}");
     s.setAttribute("data-agent-id", "${agentId}");
+    s.setAttribute("data-base-url", "${process.env.NEXT_PUBLIC_URL}");
     document.body.appendChild(s);
   })();
 </script>`}

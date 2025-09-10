@@ -40,7 +40,7 @@ const handleSubmit = async (data: FormData) => {
 
     const sessionId = getSessionId(agent.user);
 
-    const res = await fetch(`http://localhost:3000/api/chat`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -261,7 +261,7 @@ async function init() {
 
   try {
     const res = await fetch(
-      `http://localhost:3000/api/workspace/${workSpaceURL}/agent/${agentId}`
+      `${baseUrl}/api/workspace/${workSpaceURL}/agent/${agentId}`
     );
     const agent = await res.json();
 
