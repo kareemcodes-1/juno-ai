@@ -260,7 +260,7 @@ async function init() {
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/workspace/${workSpaceURL}/agent/${agentId}`
+      `${process.env.NEXT_PUBLIC_URL}/api/workspace/${workSpaceURL}/agent/${agentId}`
     );
     const agent = await res.json();
 
