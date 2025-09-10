@@ -40,7 +40,7 @@ const handleSubmit = async (data: FormData) => {
 
     const sessionId = getSessionId(agent.user);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/chat`, {
+    const res = await fetch(`http://localhost:3000/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -252,15 +252,16 @@ async function init() {
   const script = document.currentScript as HTMLScriptElement;
   const agentId = script?.getAttribute("data-agent-id");
   const workSpaceURL = script?.getAttribute("data-workspace-url");
+  const baseUrl = script?.getAttribute("data-base-url"); // 👈 added
 
-  if (!agentId || !workSpaceURL) {
-    console.error("ChatWidget: Missing data-agent-id or workspace");
+  if (!agentId || !workSpaceURL || !baseUrl) {
+    console.error("ChatWidget: Missing data attributes");
     return;
   }
 
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}/api/workspace/${workSpaceURL}/agent/${agentId}`
+      `http://localhost:3000/api/workspace/${workSpaceURL}/agent/${agentId}`
     );
     const agent = await res.json();
 

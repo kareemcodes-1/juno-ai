@@ -3,7 +3,7 @@ import { User } from "../../types";
 
 export async function registerUser(userInfo: User) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/register`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/register`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
