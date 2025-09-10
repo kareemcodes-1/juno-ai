@@ -6,11 +6,11 @@ import connectDB from "@/config/connectDB";
 // UPDATE USER
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> } // ✅ Promise
 ) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await context.params; // ✅ await params
 
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
@@ -57,12 +57,12 @@ export async function PUT(
 
 // DELETE USER
 export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> } // ✅ Promise
 ) {
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await context.params; // ✅ await params
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });

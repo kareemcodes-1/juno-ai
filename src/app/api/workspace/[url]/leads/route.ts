@@ -3,14 +3,15 @@ import connectDB from "@/config/connectDB";
 import Lead from "@/models/Lead";
 import Workspace from "@/models/Workspace";
 
+// GET all leads for a workspace
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { url: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ url: string }> }
 ) {
   await connectDB();
 
   try {
-    const { url } = params;
+    const { url } = await context.params; // ✅ await params
 
     // 1. Find workspace by URL
     const workspace = await Workspace.findOne({ url });

@@ -1,7 +1,7 @@
 import connectDB from "@/config/connectDB";
 import Agent from "@/models/Agent";
 import Workspace from "@/models/Workspace";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 function withCORS<T>(json: T, status = 200) {
   return NextResponse.json(json, {
@@ -16,13 +16,14 @@ function withCORS<T>(json: T, status = 200) {
 
 // GET single agent
 export async function GET(
-  _req: Request,
-  { params }: { params: { url: string; id: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = params;
+    const { url, id } = await context.params; // ✅ await the params
+
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
@@ -42,13 +43,14 @@ export async function GET(
 
 // UPDATE agent
 export async function PATCH(
-  req: Request,
-  { params }: { params: { url: string; id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = params;
+    const { url, id } = await context.params;
+
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
@@ -74,13 +76,14 @@ export async function PATCH(
 
 // DELETE agent
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { url: string; id: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = params;
+    const { url, id } = await context.params;
+
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);

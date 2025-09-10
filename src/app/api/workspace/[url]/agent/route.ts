@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import connectDB from "../../../../../config/connectDB";
 import Workspace from "@/models/Workspace";
 import Agent from "@/models/Agent";
 
 // CREATE AGENT
 export async function POST(
-  req: Request,
-  { params }: { params: { url: string } }
+  req: NextRequest,
+  context: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
@@ -35,7 +35,7 @@ export async function POST(
       );
     }
 
-    const { url } = params;
+    const { url } = await context.params; // ✅ await params
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
@@ -69,13 +69,13 @@ export async function POST(
 
 // VIEW ALL AGENTS
 export async function GET(
-  _req: Request,
-  { params }: { params: { url: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
 
-    const { url } = params;
+    const { url } = await context.params; // ✅ await params
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });

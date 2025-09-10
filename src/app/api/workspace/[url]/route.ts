@@ -5,14 +5,13 @@ import Workspace from "@/models/Workspace";
 // GET a single workspace
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { url: string } }
+  context: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
-    const { url } = params;
+    const { url } = await context.params;
 
     const workspace = await Workspace.findOne({ url });
-
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
@@ -27,14 +26,13 @@ export async function GET(
 // UPDATE workspace
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { url: string } }
+  context: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
-    const { url } = params;
+    const { url } = await context.params;
 
     const workspace = await Workspace.findOne({ url });
-
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
@@ -61,14 +59,13 @@ export async function PATCH(
 // DELETE workspace
 export async function DELETE(
   _req: NextRequest,
-  { params }: { params: { workspace: string } }
+  context: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = params;
+    const { url } = await context.params;
 
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
-
+    const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
