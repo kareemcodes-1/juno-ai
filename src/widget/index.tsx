@@ -20,7 +20,7 @@ type AgentConfig = {
   welcomeMessage: string;
 };
 
-const ChatWidget = ({ agent }: { agent: AgentConfig }) => {
+const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig, baseUrl: string }) => {
   const [messages, setMessages] = useState<Message[]>([
     { role: "bot", content: agent.welcomeMessage || "Hi, how can I help you?" },
   ]);
@@ -40,7 +40,9 @@ const handleSubmit = async (data: FormData) => {
 
     const sessionId = getSessionId(agent.user);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/chat`, {
+    
+
+    const res = await fetch(`${baseUrl}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -266,7 +268,7 @@ async function init() {
     const agent = await res.json();
 
     const root = createRoot(container);
-    root.render(<ChatWidget agent={agent} />);
+    root.render(<ChatWidget agent={agent} baseUrl={baseUrl as string} />);
   } catch (error) {
     console.error("ChatWidget: Failed to load agent config", error);
   }
