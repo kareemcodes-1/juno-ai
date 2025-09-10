@@ -14,17 +14,15 @@ function withCORS<T>(json: T, status = 200) {
   });
 }
 
-
-
 // GET single agent
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ url: string; id: string }> }
+  { params }: { params: { url: string; id: string } }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = await params;
+    const { url, id } = params;
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
@@ -45,12 +43,12 @@ export async function GET(
 // UPDATE agent
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ url: string; id: string }> }
+  { params }: { params: { url: string; id: string } }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = await params;
+    const { url, id } = params;
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
@@ -77,18 +75,21 @@ export async function PATCH(
 // DELETE agent
 export async function DELETE(
   _req: Request,
-  { params }: { params: Promise<{ url: string; id: string }> }
+  { params }: { params: { url: string; id: string } }
 ) {
   try {
     await connectDB();
 
-    const { url, id } = await params;
+    const { url, id } = params;
     const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
     }
 
-    const agent = await Agent.findOneAndDelete({ _id: id, workspace: workspace._id });
+    const agent = await Agent.findOneAndDelete({
+      _id: id,
+      workspace: workspace._id,
+    });
     if (!agent) {
       return withCORS({ error: "Agent not found" }, 404);
     }

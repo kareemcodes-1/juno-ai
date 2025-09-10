@@ -6,11 +6,11 @@ import connectDB from "@/config/connectDB";
 // UPDATE USER
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
-    const { id } = await context.params;
+    const { id } = params;
 
     const body = await request.json();
     const { name, email, currentPassword, newPassword } = body;
@@ -34,7 +34,10 @@ export async function PUT(
 
       const passwordMatch = await bcrypt.compare(currentPassword, user.password);
       if (!passwordMatch) {
-        return NextResponse.json({ error: "Incorrect current password" }, { status: 401 });
+        return NextResponse.json(
+          { error: "Incorrect current password" },
+          { status: 401 }
+        );
       }
 
       user.password = await bcrypt.hash(newPassword, 10);
@@ -55,11 +58,11 @@ export async function PUT(
 // DELETE USER
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
-    const { id } = await context.params;
+    const { id } = params;
 
     if (!id) {
       return NextResponse.json({ error: "User ID is required" }, { status: 400 });
@@ -71,7 +74,10 @@ export async function DELETE(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "User deleted successfully" }, { status: 200 });
+    return NextResponse.json(
+      { message: "User deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

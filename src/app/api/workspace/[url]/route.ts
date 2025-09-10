@@ -4,12 +4,12 @@ import Workspace from "@/models/Workspace";
 
 // GET a single workspace
 export async function GET(
-  req: NextRequest,
-  {params}: { params: Promise<{ url: string }> }
+  _req: NextRequest,
+  { params }: { params: { url: string } }
 ) {
   try {
     await connectDB();
-    const { url } = await params;
+    const { url } = params;
 
     const workspace = await Workspace.findOne({ url });
 
@@ -24,13 +24,14 @@ export async function GET(
   }
 }
 
+// UPDATE workspace
 export async function PATCH(
   req: NextRequest,
-  {params}: { params: Promise<{ url: string }> }
+  { params }: { params: { url: string } }
 ) {
   try {
     await connectDB();
-    const { url } = await params;
+    const { url } = params;
 
     const workspace = await Workspace.findOne({ url });
 
@@ -38,7 +39,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
 
-    const { name} = await req.json();
+    const { name } = await req.json();
     if (!name || !url) {
       return NextResponse.json({ error: "Name and URL are required" }, { status: 400 });
     }
@@ -47,21 +48,24 @@ export async function PATCH(
     workspace.url = url;
     await workspace.save();
 
-    return NextResponse.json({ workspace, message: "Workspace updated successfully" });
+    return NextResponse.json({
+      workspace,
+      message: "Workspace updated successfully",
+    });
   } catch (error) {
     console.error("Error updating workspace:", error);
     return NextResponse.json({ error: "Failed to update workspace" }, { status: 500 });
   }
 }
 
-// DELETE
+// DELETE workspace
 export async function DELETE(
-  req: NextRequest,
-  context: { params: Promise<{ workspace: string }> }
+  _req: NextRequest,
+  { params }: { params: { workspace: string } }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = await context.params;
+    const { workspace: workspaceSlug } = params;
 
     const workspace = await Workspace.findOne({ url: workspaceSlug });
 
@@ -71,7 +75,10 @@ export async function DELETE(
 
     const deletedWorkspace = await Workspace.findByIdAndDelete(workspace._id);
 
-    return NextResponse.json({ deletedWorkspace, message: "Workspace deleted successfully" });
+    return NextResponse.json({
+      deletedWorkspace,
+      message: "Workspace deleted successfully",
+    });
   } catch (error) {
     console.error("Error deleting workspace:", error);
     return NextResponse.json({ error: "Failed to delete workspace" }, { status: 500 });
@@ -84,7 +91,7 @@ export async function OPTIONS() {
     status: 204,
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },
   });
