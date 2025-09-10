@@ -57,7 +57,7 @@ export async function PUT(
 
 // DELETE USER
 export async function DELETE(
-  request: NextRequest,
+  _req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
