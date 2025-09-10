@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export default function HeroText() {
-  const words = ["Customer Service", "FAQ Support", "Sales Bot"];
+  const words = ["Customer Service", "FAQ Support", "Sales"];
   const [currentIndex, setCurrentIndex] = useState(0);
   const wordRef = useRef<HTMLSpanElement>(null);
 
@@ -34,7 +34,7 @@ export default function HeroText() {
   }, [words.length]);
 
   return (
-    <span ref={wordRef} className="inline-block text-blue-600">
+    <span ref={wordRef} className="inline-block text-[#1dbf78]">
       {words[currentIndex]}
     </span>
   );

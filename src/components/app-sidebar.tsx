@@ -38,11 +38,11 @@ import Link from "next/link"
 type Workspace = {
   _id: string
   name: string
-  slug: string
+  url: string
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { url } = useParams()
+   const params = useParams<{ url: string }>()
   const router = useRouter()
   const { setWorkspace, currentWorkspace } = useWorkspaceStore()
 
@@ -50,29 +50,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [current, setCurrent] = React.useState<Workspace | null>(null)
 
   // keep workspace in global store
-  React.useEffect(() => {
-    if (url) setWorkspace(url as string)
-  }, [url, setWorkspace])
+React.useEffect(() => {
+  if (params?.url) setWorkspace(params.url)
+}, [params, setWorkspace])
 
-  // fetch workspaces
-  React.useEffect(() => {
-    async function fetchWorkspaces() {
-      try {
-        const res = await fetch("/api/workspace", { cache: "no-store" })
-        if (!res.ok) throw new Error("Failed to fetch workspaces")
-        const data = await res.json()
-        setWorkspaces(data)
+// fetch workspaces
+React.useEffect(() => {
+  async function fetchWorkspaces() {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/workspace`, { cache: "no-store" })
+      if (!res.ok) throw new Error("Failed to fetch workspaces")
+      const data = await res.json()
+      setWorkspaces(data)
 
-        const active = data.find((ws: Workspace) => ws.slug === url)
-        setCurrent(active || null)
-      } catch (err) {
-        console.error(err)
-      }
+      const active = data.find((ws: Workspace) => ws.url === params?.url)
+      setCurrent(active || null)
+    } catch (err) {
+      console.error(err)
     }
-    fetchWorkspaces()
-  }, [url])
+  }
+  fetchWorkspaces()
+}, [params])
 
-  const workspaceSlug = (url as string) || currentWorkspace || ""
+
+
+const workspaceSlug = params?.url || currentWorkspace || ""
+
 
   const data = {
     user: {
@@ -120,8 +123,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <span>Juno</span>
       </Link>
 
+      |
+
       {/* Current workspace name */}
-      <span className="text-muted-foreground">
+      <span className="text-muted-foreground text-[1rem] line-clamp-2 truncate" suppressHydrationWarning>
         {current?.name || ""}
       </span>
 
@@ -141,15 +146,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {workspaces.map((ws) => (
             <DropdownMenuItem
               key={ws._id}
-              onClick={() => router.push(`/dashboard/${ws.slug}`)}
+              onClick={() => router.push(`/dashboard/${ws.url}/agents`)}
             >
               {ws.name}
             </DropdownMenuItem>
           ))}
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => router.push("/dashboard/workspace")}
-            className="text-blue-600 font-medium"
+            onClick={() => router.push("/dashboard/workspace/create")}
+            className="text-green-600 font-medium cursor-pointer"
           >
             + Create New Workspace
           </DropdownMenuItem>

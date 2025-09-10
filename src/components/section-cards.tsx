@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
+import Link from "next/link";
 
 interface Agent {
   _id: string;
@@ -51,6 +52,8 @@ export function SectionCards({ workspace }: { workspace: string }) {
   const [deleteAgentId, setDeleteAgentId] = useState<string | null>(null);
   const [agentId, setAgentId] = useState<string | null>(null);
   const [openEmbed, setOpenEmbed] = useState<boolean>(false);
+
+
 
   useEffect(() => {
     async function fetchAgents() {
@@ -69,6 +72,7 @@ export function SectionCards({ workspace }: { workspace: string }) {
 
     fetchAgents();
   }, [workspace]);
+
 
   async function handleDelete() {
     if (!deleteAgentId) return;
@@ -188,60 +192,74 @@ export function SectionCards({ workspace }: { workspace: string }) {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
-        {agents.map((agent) => (
-          <Card key={agent._id} className="@container/card">
-            <CardHeader>
-              <CardDescription>{agent.role}</CardDescription>
-              <CardTitle
-                className="
-    text-[1.5rem] 
-    sm:text-lg 
-    md:text-xl 
-    lg:text-2xl 
-    xl:text-2xl 
-    font-semibold 
-    tabular-nums
-  "
-              >
-                {agent.name}
-              </CardTitle>
+       <>
 
-              <CardAction>
-                <Switch className="cursor-pointer" />
-              </CardAction>
-            </CardHeader>
-            <CardFooter className="flex flex-col items-start gap-[1rem] justify-between text-sm">
-              <div className="flex gap-[.5rem]">
-                <Badge className="cursor-pointer">Train</Badge>
-                <Badge className="cursor-pointer">Tools</Badge>
-                <Badge className="cursor-pointer">Test</Badge>
-              </div>
+      {agents.length === 0 ? (
+        <div className="px-4 lg:px-6 py-10 text-center text-gray-500">
+             <div className="flex items-center justify-center">
+              <img src="https://img.icons8.com/?size=100&id=C8gfz6xPL7TZ&format=png&color=000000" alt="" />
+             </div>
+          <p className="text-[1.5rem] font-medium">No agents found for this workspace.</p>
+          <p className="text-[1rem]">Create your first agent to get started!</p>
+          <Button variant={'default'} className="mt-[1.2rem]"><Link href={`/dashboard/${workspace}/agents/new`}>Create new</Link></Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
+          {agents.map((agent) => (
+            <Card key={agent._id} className="@container/card">
+              <CardHeader>
+                <CardDescription>{agent.role}</CardDescription>
+                <CardTitle
+                  className="
+                    text-[1.5rem] 
+                    sm:text-lg 
+                    md:text-xl 
+                    lg:text-2xl 
+                    xl:text-2xl 
+                    font-semibold 
+                    tabular-nums
+                  "
+                >
+                  {agent.name}
+                </CardTitle>
+                <CardAction>
+                  <Switch className="cursor-pointer" />
+                </CardAction>
+              </CardHeader>
+              <CardFooter className="flex flex-col items-start gap-[1rem] justify-between text-sm">
+                <div className="flex gap-[.5rem]">
+                  <Badge className="cursor-pointer">Train</Badge>
+                  <Badge className="cursor-pointer">Tools</Badge>
+                  <Badge className="cursor-pointer">Test</Badge>
+                </div>
 
-              <div className="flex gap-[.5rem]">
-                <Edit
-                  className="cursor-pointer"
-                  onClick={() =>
-                    router.push(
-                      `/dashboard/${workspace}/agents/${agent._id}/edit`
-                    )
-                  }
-                />
-                <CodeXml
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setOpenEmbed(true), setAgentId(agent._id);
-                  }}
-                />
-                <Trash
-                  className="cursor-pointer"
-                  onClick={() => setDeleteAgentId(agent._id)}
-                />
-              </div>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+                <div className="flex gap-[.5rem]">
+                  <Edit
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push(
+                        `/dashboard/${workspace}/agents/${agent._id}/edit`
+                      )
+                    }
+                  />
+                  <CodeXml
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setOpenEmbed(true);
+                      setAgentId(agent._id);
+                    }}
+                  />
+                  <Trash
+                    className="cursor-pointer"
+                    onClick={() => setDeleteAgentId(agent._id)}
+                  />
+                </div>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+    </>
     </>
   );
 }

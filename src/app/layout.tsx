@@ -7,7 +7,7 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: "Juno AI Agent for your business",
   description:
-    "Upload, transform, and optimize your images with AI-powered tools. Resize, crop, remove backgrounds, and more with AI transformations.",
+    "Create and manage AI agents that adapt to your business needs. Customize their roles, instructions, and appearance to deliver personalized, intelligent support across your workspace",
 };
 
 export default function RootLayout({
@@ -18,7 +18,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={` antialiased`}>
-        {" "}
         <ToastProvider />
         <AuthProvider>
                     {children}

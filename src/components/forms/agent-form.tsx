@@ -12,6 +12,7 @@ import { MessageSquare, Bot, Mail, MessageCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import ChatWidget from "../widget/chat-widget";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 type AgentFormProps = {
   id?: string;
@@ -38,6 +39,7 @@ export default function AgentForm({ id }: AgentFormProps) {
   const [pages, setPages] = useState("all");
   const [logoFile, setLogoFile] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const {data: session} = useSession();
 
   // Fetch data if edit
   useEffect(() => {
@@ -86,6 +88,7 @@ export default function AgentForm({ id }: AgentFormProps) {
     setLoading(true);
     try {
       const payload = {
+        user: session?.user.id as string,
         name: agentName,
         message: welcomeMessage,
         instructions,

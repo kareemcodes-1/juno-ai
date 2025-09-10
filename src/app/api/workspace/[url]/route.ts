@@ -5,13 +5,13 @@ import Workspace from "@/models/Workspace";
 // GET a single workspace
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ workspace: string }> }
+  {params}: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = await context.params;
+    const { url } = await params;
 
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
+    const workspace = await Workspace.findOne({ url });
 
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
@@ -26,19 +26,19 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  context: { params: Promise<{ workspace: string }> }
+  {params}: { params: Promise<{ url: string }> }
 ) {
   try {
     await connectDB();
-    const { workspace: workspaceSlug } = await context.params;
+    const { url } = await params;
 
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
+    const workspace = await Workspace.findOne({ url });
 
     if (!workspace) {
       return NextResponse.json({ error: "Workspace not found" }, { status: 404 });
     }
 
-    const { name, url } = await req.json();
+    const { name} = await req.json();
     if (!name || !url) {
       return NextResponse.json({ error: "Name and URL are required" }, { status: 400 });
     }

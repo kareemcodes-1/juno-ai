@@ -19,13 +19,13 @@ function withCORS<T>(json: T, status = 200) {
 // GET single agent
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ workspace: string; id: string }> }
+  { params }: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { workspace: workspaceSlug, id } = await params;
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
+    const { url, id } = await params;
+    const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
     }
@@ -45,13 +45,13 @@ export async function GET(
 // UPDATE agent
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ workspace: string; id: string }> }
+  { params }: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { workspace: workspaceSlug, id } = await params;
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
+    const { url, id } = await params;
+    const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
     }
@@ -77,13 +77,13 @@ export async function PATCH(
 // DELETE agent
 export async function DELETE(
   _req: Request,
-  { params }: { params: Promise<{ workspace: string; id: string }> }
+  { params }: { params: Promise<{ url: string; id: string }> }
 ) {
   try {
     await connectDB();
 
-    const { workspace: workspaceSlug, id } = await params;
-    const workspace = await Workspace.findOne({ url: workspaceSlug });
+    const { url, id } = await params;
+    const workspace = await Workspace.findOne({ url });
     if (!workspace) {
       return withCORS({ error: "Workspace not found" }, 404);
     }
