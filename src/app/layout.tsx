@@ -24,21 +24,23 @@ export default function RootLayout({
         </AuthProvider>
 
          <Script
-                id="chat-widget"
-                strategy="afterInteractive"
-                dangerouslySetInnerHTML={{
-                  __html: `
-                    (function(){
-                      var script = document.createElement("script");
-                      script.src = "http://localhost:3000/widget.js"; // your widget bundle
-                      script.async = true;
-                      script.setAttribute("data-workspace-url", "test-url");
-                       script.setAttribute("data-agent-id", "68bd73787e4cf74e0c293906");
-                       document.body.appendChild(script);
-                    })();
-                  `,
-                }}
-              />
+  id="chat-widget"
+  strategy="afterInteractive"
+  dangerouslySetInnerHTML={{
+    __html: `
+      (function(){
+        var script = document.createElement("script");
+        script.src = "http://localhost:3000/widget.js"; // your widget bundle
+        script.async = true;
+        script.setAttribute("data-workspace-url", "test-url");
+        script.setAttribute("data-agent-id", "68bd73787e4cf74e0c293906");
+        script.setAttribute("data-base-url", "http://localhost:3000"); // ✅ fixed
+        document.body.appendChild(script);
+      })();
+    `,
+  }}
+/>
+
       </body>
     </html>
   );

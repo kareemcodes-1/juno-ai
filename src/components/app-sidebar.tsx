@@ -34,6 +34,7 @@ import { ChevronDown } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { useWorkspaceStore } from "../lib/store"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
 
 type Workspace = {
   _id: string
@@ -47,7 +48,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { setWorkspace, currentWorkspace } = useWorkspaceStore()
 
   const [workspaces, setWorkspaces] = React.useState<Workspace[]>([])
-  const [current, setCurrent] = React.useState<Workspace | null>(null)
+  const [current, setCurrent] = React.useState<Workspace | null>(null);
+  const {data: session} = useSession();
 
   // keep workspace in global store
 React.useEffect(() => {
@@ -79,9 +81,9 @@ const workspaceSlug = params?.url || currentWorkspace || ""
 
   const data = {
     user: {
-      name: "shadcn",
-      email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg",
+      name: session?.user.name,
+      email: session?.user.email,
+      avatar: `https://api.dicebear.com/9.x/glass/svg?seed${session?.user.name}`,
     },
     navMain: [
       {

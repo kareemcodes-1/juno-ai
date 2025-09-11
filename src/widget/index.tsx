@@ -82,6 +82,8 @@ const handleSubmit = async (data: FormData) => {
             cursor: "pointer",
             backgroundColor: agent.accentColor,
             border: "none",
+           zIndex: 999999,
+           fontFamily: "Cabinet Grotesk, sans-serif",
           }}
         >
           {agent.icon === "bot" && <Bot color="#fff" size={28} />}
@@ -112,6 +114,7 @@ const handleSubmit = async (data: FormData) => {
             backgroundColor: "#fff",
             overflow: "hidden",
             fontFamily: "Cabinet Grotesk, sans-serif",
+            zIndex: 999999,
           }}
         >
           {/* Header */}
@@ -226,7 +229,8 @@ const handleSubmit = async (data: FormData) => {
                 padding: "8px 16px",
                 cursor: "pointer",
                 fontFamily: "Cabinet Grotesk, sans-serif",
-                fontWeight: "500"
+                fontWeight: "500",
+                zIndex: 999999,
               }}
             >
               Send
