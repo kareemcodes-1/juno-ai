@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Bot, Mail, MessageCircle, MessageSquare, X } from "lucide-react";
 import Image from "next/image";
+import { getSessionId } from "../../lib/session"; // 👈 same helper you already have
 
 type Message = {
   role: "user" | "bot";
@@ -11,44 +12,74 @@ type Message = {
 type ChatWidgetProps = {
   name: string;
   role: string;
+  agentId: string;
+  userId: string;
   label: string;
   placeholder: string;
   accentColor: string;
-  icon?: string;
+  icon?: "bot" | "mail" | "message-square" | "message-circle";
   welcomeMessage: string;
-  logo?: string | null; // ✅ new
-  position?: "bottom-right" | "bottom-left"; // ✅ new
+  logo?: string | null;
+  position?: "bottom-right" | "bottom-left";
+  baseUrl: string; // 👈 so widget knows where to hit
 };
 
 const ChatWidget = ({
+  name,
+  role,
+  agentId,
+  userId,
   label,
   placeholder,
   accentColor,
-  icon,
+  icon = "bot",
   welcomeMessage,
   logo,
   position = "bottom-right",
+  baseUrl,
 }: ChatWidgetProps) => {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", content: welcomeMessage || "Hi, How can I help you today?" },
+    { role: "bot", content: welcomeMessage || "Hi, how can I help you?" },
   ]);
   const [isOpen, setIsOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
-  const handleSubmit = (data: FormData) => {
+  const handleSubmit = async (data: FormData) => {
     const message = data.get("message") as string;
     if (!message.trim()) return;
 
+    const newMessages = [...messages, { role: "user", content: message }];
     setMessages([...messages, { role: "user", content: message }]);
+    setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const sessionId = getSessionId(userId);
+
+      const res = await fetch(`${baseUrl}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          agentId,
+          sessionId,
+          messages: newMessages,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch reply");
+      const { reply } = await res.json();
+
+      setMessages((prev) => [...prev, { role: "bot", content: reply }]);
+    } catch (err) {
+      console.error(err);
       setMessages((prev) => [
         ...prev,
-        { role: "bot", content: "This is a dummy response. (AI coming soon!)" },
+        { role: "bot", content: "⚠️ Error: could not reach support." },
       ]);
-    }, 1000);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
-  // Position classes
   const positionClass =
     position === "bottom-left" ? "bottom-6 left-6" : "bottom-6 right-6";
 
@@ -58,7 +89,7 @@ const ChatWidget = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className={`fixed ${positionClass} p-4 rounded-full shadow-lg cursor-pointer  z-[100]`}
+          className={`fixed ${positionClass} p-4 rounded-full shadow-lg cursor-pointer z-[100]`}
           style={{ backgroundColor: accentColor }}
         >
           {icon === "bot" && <Bot color="#fff" size={28} />}
@@ -84,16 +115,15 @@ const ChatWidget = ({
               {logo && (
                 <Image
                   src={logo}
-                  width={500}
-                  height={500}
-                  quality={100}
+                  width={28}
+                  height={28}
                   alt="Agent Logo"
                   className="w-7 h-7 rounded-full border"
                 />
               )}
               <span>{label || "Support Bot"}</span>
             </div>
-            <button className="cursor-pointer" onClick={() => setIsOpen(false)}>
+            <button onClick={() => setIsOpen(false)} className="cursor-pointer">
               <X size={20} />
             </button>
           </div>
@@ -111,10 +141,9 @@ const ChatWidget = ({
                   <>
                     {logo ? (
                       <Image
-                      width={500}
-                      height={500}
-                      quality={100}
                         src={logo}
+                        width={24}
+                        height={24}
                         alt="Bot Avatar"
                         className="w-6 h-6 rounded-full"
                       />
@@ -138,10 +167,27 @@ const ChatWidget = ({
                 </div>
               </div>
             ))}
+
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex justify-start">
+                <div className="p-2 rounded-lg bg-gray-100 text-gray-500 italic">
+                  Typing...
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Input Form */}
-          <form action={handleSubmit} className="flex border-t p-2">
+          <form
+            action={handleSubmit}
+            className="flex border-t p-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(new FormData(e.currentTarget));
+              e.currentTarget.reset();
+            }}
+          >
             <input
               name="message"
               className="flex-1 border rounded-xl px-3 py-2 mr-2 outline-none"

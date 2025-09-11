@@ -20,70 +20,80 @@ type AgentConfig = {
   welcomeMessage: string;
 };
 
-const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string }) => {
+const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig, baseUrl: string }) => {
   const [messages, setMessages] = useState<Message[]>([
     { role: "bot", content: agent.welcomeMessage || "Hi, how can I help you?" },
   ]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false); // typing indicator
 
-  const handleSubmit = async (data: FormData) => {
-    const message = data.get("message") as string;
-    if (!message.trim()) return;
+const handleSubmit = async (data: FormData) => {
+  const message = data.get("message") as string;
+  if (!message.trim()) return;
 
-    const newMessages = [...messages, { role: "user", content: message }];
-    setMessages([...messages, { role: "user", content: message }]);
-    setIsTyping(true);
+  const newMessages = [...messages, { role: "user", content: message }];
+  setMessages([...messages, { role: "user", content: message }]);
 
-    try {
-      const sessionId = getSessionId(agent.user);
+  setIsTyping(true);
 
-      const res = await fetch(`${baseUrl}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agentId: agent._id,
-          sessionId,
-          messages: newMessages,
-        }),
-      });
+  try {
 
-      const { reply } = await res.json();
-      setMessages((prev) => [...prev, { role: "bot", content: reply }]);
-    } catch (error) {
-      console.error(error);
-      setMessages((prev) => [
-        ...prev,
-        { role: "bot", content: "⚠️ Error: could not reach support." },
-      ]);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+    const sessionId = getSessionId(agent.user);
+
+    
+
+    const res = await fetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        agentId: agent._id,
+        sessionId: sessionId, // ✅ add session
+        messages: newMessages,
+      }),
+    });
+
+    const { reply } = await res.json();
+    setMessages((prev) => [...prev, { role: "bot", content: reply }]);
+  } catch (error) {
+    console.error(error);
+    setMessages((prev) => [
+      ...prev,
+      { role: "bot", content: "⚠️ Error: could not reach support." },
+    ]);
+  } finally {
+    setIsTyping(false);
+  }
+};
+
 
   return (
-    <div style={{ fontFamily: "Cabinet Grotesk, sans-serif", fontWeight: 500 }}>
+    <div style={{ fontFamily: "Cabinet Grotesk, sans-serif", fontWeight: "500" }}>
       {/* Floating Toggle Button */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           style={{
             position: "fixed",
-            bottom: "16px",
-            right: "16px",
-            padding: "14px",
+            bottom: "24px",
+            right: "24px",
+            padding: "16px",
             borderRadius: "50%",
             boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
             cursor: "pointer",
             backgroundColor: agent.accentColor,
             border: "none",
-            zIndex: 2147483647, // highest safe z-index
+           zIndex: 999999,
+           fontFamily: "Cabinet Grotesk, sans-serif",
           }}
         >
-          {agent.icon === "bot" && <Bot color="#fff" size={26} />}
-          {agent.icon === "mail" && <Mail color="#fff" size={26} />}
-          {agent.icon === "message-square" && <MessageSquare color="#fff" size={26} />}
-          {agent.icon === "message-circle" && <MessageCircle color="#fff" size={26} />}
+          {agent.icon === "bot" && <Bot color="#fff" size={28} />}
+          {agent.icon === "mail" && <Mail color="#fff" size={28} />}
+          {agent.icon === "message-square" && (
+            <MessageSquare color="#fff" size={28} />
+          )}
+          {agent.icon === "message-circle" && (
+            <MessageCircle color="#fff" size={28} />
+          )}
         </button>
       )}
 
@@ -92,10 +102,10 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
         <div
           style={{
             position: "fixed",
-            bottom: "16px",
-            right: "16px",
+            bottom: "24px",
+            right: "24px",
             width: "320px",
-            maxHeight: "80vh", // ✅ responsive height
+            height: "500px",
             display: "flex",
             flexDirection: "column",
             border: "1px solid #ccc",
@@ -104,7 +114,7 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
             backgroundColor: "#fff",
             overflow: "hidden",
             fontFamily: "Cabinet Grotesk, sans-serif",
-            zIndex: 2147483647,
+            zIndex: 999999,
           }}
         >
           {/* Header */}
@@ -142,7 +152,6 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
               display: "flex",
               flexDirection: "column",
               gap: "8px",
-              minHeight: 0, // ✅ prevents flexbox overflow
             }}
           >
             {messages.map((m, i) => (
@@ -150,7 +159,8 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
                 key={i}
                 style={{
                   alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                  backgroundColor: m.role === "user" ? agent.accentColor : "#e5e7eb",
+                  backgroundColor:
+                    m.role === "user" ? agent.accentColor : "#e5e7eb",
                   color: m.role === "user" ? "#fff" : "#000",
                   padding: "8px 12px",
                   borderRadius: "12px",
@@ -163,7 +173,7 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
               </div>
             ))}
 
-            {/* Typing Indicator */}
+            {/* Typing indicator */}
             {isTyping && (
               <div
                 style={{
@@ -174,9 +184,10 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
                   borderRadius: "12px",
                   maxWidth: "50%",
                   fontStyle: "italic",
+                  fontFamily: "Cabinet Grotesk, sans-serif",
                 }}
               >
-                Typing...
+                Typing<span className="dots">...</span>
               </div>
             )}
           </div>
@@ -192,7 +203,6 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
               display: "flex",
               borderTop: "1px solid #eee",
               padding: "8px",
-              background: "#fff",
             }}
           >
             <input
@@ -206,6 +216,7 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
                 marginRight: "8px",
                 outline: "none",
                 fontFamily: "Cabinet Grotesk, sans-serif",
+                fontWeight: "500"
               }}
             />
             <button
@@ -218,7 +229,8 @@ const ChatWidget = ({ agent, baseUrl }: { agent: AgentConfig; baseUrl: string })
                 padding: "8px 16px",
                 cursor: "pointer",
                 fontFamily: "Cabinet Grotesk, sans-serif",
-                fontWeight: 500,
+                fontWeight: "500",
+                zIndex: 999999,
               }}
             >
               Send
@@ -246,7 +258,7 @@ async function init() {
   const script = document.currentScript as HTMLScriptElement;
   const agentId = script?.getAttribute("data-agent-id");
   const workSpaceURL = script?.getAttribute("data-workspace-url");
-  const baseUrl = script?.getAttribute("data-base-url");
+  const baseUrl = script?.getAttribute("data-base-url"); // 👈 added
 
   if (!agentId || !workSpaceURL || !baseUrl) {
     console.error("ChatWidget: Missing data attributes");
@@ -254,7 +266,9 @@ async function init() {
   }
 
   try {
-    const res = await fetch(`${baseUrl}/api/workspace/${workSpaceURL}/agent/${agentId}`);
+    const res = await fetch(
+      `${baseUrl}/api/workspace/${workSpaceURL}/agent/${agentId}`
+    );
     const agent = await res.json();
 
     const root = createRoot(container);

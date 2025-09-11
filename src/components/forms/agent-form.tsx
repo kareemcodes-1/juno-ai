@@ -29,7 +29,7 @@ export default function AgentForm({ id }: AgentFormProps) {
   const [instructions, setInstructions] = useState("You are a helpful assistant...");
   const [widgetLabel, setWidgetLabel] = useState("AI agent");
   const [placeholderText, setPlaceholderText] = useState("Enter your message here...");
-  const [chatboxIcon, setChatboxIcon] = useState("");
+  const [chatboxIcon, setChatboxIcon] = useState<"bot" | "mail" | "message-square" | "message-circle" | undefined>(undefined);
   const [position, setPosition] = useState<"bottom-right" | "bottom-left">("bottom-right");
   const [role, setRole] = useState("");
   const [accentColor, setAccentColor] = useState("#000000");
@@ -40,6 +40,8 @@ export default function AgentForm({ id }: AgentFormProps) {
   const [logoFile, setLogoFile] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const {data: session} = useSession();
+  const [baseUrl, setBaseUrl] = useState(process.env.NEXT_PUBLIC_URL || "");
+
 
   // Fetch data if edit
   useEffect(() => {
@@ -103,6 +105,7 @@ export default function AgentForm({ id }: AgentFormProps) {
         devices,
         pages,
         logo: logoFile,
+        baseUrl,
       };
 
       const endpoint = id
@@ -135,17 +138,24 @@ export default function AgentForm({ id }: AgentFormProps) {
   return (
     <div className="flex flex-col gap-6">
 
+{ id && (
   <ChatWidget
-  name={agentName}
-  role={role}
-  label={widgetLabel}
-  placeholder={placeholderText}
-  accentColor={accentColor}
-  icon={chatboxIcon}
-  welcomeMessage={welcomeMessage}
-  logo={logoFile} 
-  position={position}  
-/>
+    userId={session?.user.id as string}
+    agentId={id}
+    name={agentName}
+    role={role}
+    label={widgetLabel}
+    placeholder={placeholderText}
+    accentColor={accentColor}
+    icon={chatboxIcon}
+    welcomeMessage={welcomeMessage}
+    logo={logoFile}
+    position={position}
+    baseUrl={baseUrl}
+  />
+)}
+
+
 
 
 
@@ -174,6 +184,13 @@ export default function AgentForm({ id }: AgentFormProps) {
         <Label className="text-[1.2rem] font-medium">Widget Label</Label>
         <Input value={widgetLabel} onChange={(e) => setWidgetLabel(e.target.value)} />
       </div>
+
+      <div className="flex flex-col gap-[.5rem]">
+  <Label className="text-[1.2rem] font-medium">Base URL</Label>
+  <Input value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} />
+</div>
+
+
       <div className="flex flex-col gap-[.5rem]">
         <Label className="text-[1.2rem] font-medium">Chatbot Logo</Label>
         <input ref={fileRef} type="file" className="hidden" onChange={handleFile} />
@@ -184,19 +201,28 @@ export default function AgentForm({ id }: AgentFormProps) {
       </div>
       <div className="flex flex-col gap-[.5rem]">
         <Label className="text-[1.2rem] font-medium">Chatbox Icon</Label>
-        <Select value={chatboxIcon} onValueChange={setChatboxIcon}>
-          <SelectTrigger className="w-[220px]">
-            <SelectValue placeholder="Select icon" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="message-square"><MessageSquare className="w-4 h-4 inline mr-2"/>Message</SelectItem>
-              <SelectItem value="bot"><Bot className="w-4 h-4 inline mr-2"/>Bot</SelectItem>
-              <SelectItem value="mail"><Mail className="w-4 h-4 inline mr-2"/>Mail</SelectItem>
-              <SelectItem value="message-circle"><MessageCircle className="w-4 h-4 inline mr-2"/>Bubble</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+        <Select value={chatboxIcon} onValueChange={(val) => setChatboxIcon(val as "bot" | "mail" | "message-square" | "message-circle")}>
+  <SelectTrigger className="w-[220px]">
+    <SelectValue placeholder="Select icon" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectItem value="message-square">
+        <MessageSquare className="w-4 h-4 inline mr-2" /> Message
+      </SelectItem>
+      <SelectItem value="bot">
+        <Bot className="w-4 h-4 inline mr-2" /> Bot
+      </SelectItem>
+      <SelectItem value="mail">
+        <Mail className="w-4 h-4 inline mr-2" /> Mail
+      </SelectItem>
+      <SelectItem value="message-circle">
+        <MessageCircle className="w-4 h-4 inline mr-2" /> Bubble
+      </SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>
+
       </div>
       <div className="flex flex-col gap-[.5rem]">
         <Label className="text-[1.2rem] font-medium">Position</Label>
