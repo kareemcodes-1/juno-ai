@@ -81,7 +81,7 @@ const ChatWidget = ({
   };
 
   const positionClass =
-    position === "bottom-left" ? "bottom-6 left-6" : "bottom-6 right-6";
+    position === "bottom-left" ? "bottom-[2rem] right-[2rem]" : "bottom-6 right-6";
 
   return (
     <div>
@@ -89,7 +89,7 @@ const ChatWidget = ({
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className={`fixed ${positionClass} p-4 rounded-full shadow-lg cursor-pointer z-[100]`}
+          className={`fixed ${positionClass} p-4 rounded-full shadow-lg cursor-pointer z-[100000000]`}
           style={{ backgroundColor: accentColor }}
         >
           {icon === "bot" && <Bot color="#fff" size={28} />}
