@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import ChatWidget from "../widget/chat-widget";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import WidgetPortal from "@/app/providers/widget-portal";
 
 type AgentFormProps = {
   id?: string;
@@ -136,29 +137,26 @@ export default function AgentForm({ id }: AgentFormProps) {
 
 
   return (
+    <>
+    { id && (
+  <WidgetPortal>
+    <ChatWidget
+      userId={session?.user.id as string}
+      agentId={id}
+      name={agentName}
+      role={role}
+      label={widgetLabel}
+      placeholder={placeholderText}
+      accentColor={accentColor}
+      icon={chatboxIcon}
+      welcomeMessage={welcomeMessage}
+      logo={logoFile}
+      position={position}
+      baseUrl={baseUrl}
+    />
+  </WidgetPortal>
+) }
     <div className="flex flex-col gap-6">
-
-{ id && (
-  <ChatWidget
-    userId={session?.user.id as string}
-    agentId={id}
-    name={agentName}
-    role={role}
-    label={widgetLabel}
-    placeholder={placeholderText}
-    accentColor={accentColor}
-    icon={chatboxIcon}
-    welcomeMessage={welcomeMessage}
-    logo={logoFile}
-    position={position}
-    baseUrl={baseUrl}
-  />
-)}
-
-
-
-
-
       <h1 className="text-[2.5rem] font-bold">{id ? "Edit Agent" : "Create Agent"}</h1>
 
       {/* Settings */}
@@ -292,5 +290,6 @@ export default function AgentForm({ id }: AgentFormProps) {
          {loading ? "Saving..." : id ? "Update Agent" : "Save Agent"}
       </Button>
     </div>
+    </>
   );
 }
