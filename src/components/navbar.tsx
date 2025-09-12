@@ -23,7 +23,7 @@ export function Navbar({workspaces}: {workspaces: Workspace[]}) {
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-[1rem]">
       <div className="container flex h-16 items-center justify-between">
         {/* <div className="flex items-center gap-6"> */}
-           <Link href={`/`} className="flex items-center gap-[.3rem]">
+           <Link href={`/`} className="flex items-center justify-center gap-[.3rem]">
                 <IconInnerShadowTop className="!size-6" />
                 <span className="text-[1.3rem] font-semibold">Juno</span>
           </Link>

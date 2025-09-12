@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 export default function HeroText() {
-  const words = ["Customer Service", "FAQ Support", "Sales"];
+  const words = ["Customer", "FAQ", "Sales"];
   const [currentIndex, setCurrentIndex] = useState(0);
   const wordRef = useRef<HTMLSpanElement>(null);
 

@@ -242,40 +242,53 @@ const handleSubmit = async (data: FormData) => {
   );
 };
 
-// --- Embeddable init function ---
-async function init() {
-  const container = document.createElement("div");
-  container.id = "my-chat-widget";
-  document.body.appendChild(container);
+(function () {
+  // Create host container
+  const host = document.createElement("div");
+  host.id = "juno-widget-host";
+  host.style.position = "fixed";
+  host.style.bottom = "24px";
+  host.style.right = "24px";
+  host.style.zIndex = "2147483647"; // max safe value
+  host.style.width = "0"; // we render inside shadow, so no size here
+  host.style.height = "0";
+  document.body.appendChild(host);
 
-  // Inject Cabinet Grotesk font
+  // Attach shadow root (isolate styles)
+  const shadow = host.attachShadow({ mode: "open" });
+
+  // Real container inside shadow
+  const appContainer = document.createElement("div");
+  appContainer.id = "juno-widget-app";
+  shadow.appendChild(appContainer);
+
+  // Inject font (optional)
   const fontLink = document.createElement("link");
   fontLink.rel = "stylesheet";
   fontLink.href =
     "https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@300,400,500,700,800,900&display=swap";
-  document.head.appendChild(fontLink);
+  shadow.appendChild(fontLink);
 
-  const script = document.currentScript as HTMLScriptElement;
-  const agentId = script?.getAttribute("data-agent-id");
-  const workSpaceURL = script?.getAttribute("data-workspace-url");
-  const baseUrl = script?.getAttribute("data-base-url"); // 👈 added
+  // Pull data attributes from the script tag
+  const currentScript = document.currentScript;
+  const agentId = currentScript?.getAttribute("data-agent-id");
+  const workspace = currentScript?.getAttribute("data-workspace-url");
+  const baseUrl = currentScript?.getAttribute("data-base-url");
 
-  if (!agentId || !workSpaceURL || !baseUrl) {
-    console.error("ChatWidget: Missing data attributes");
+  if (!agentId || !workspace || !baseUrl) {
+    console.error("Widget: missing data attributes");
     return;
   }
 
-  try {
-    const res = await fetch(
-      `${baseUrl}/api/workspace/${workSpaceURL}/agent/${agentId}`
-    );
-    const agent = await res.json();
+  // Fetch agent config and mount
+  fetch(`${baseUrl}/api/workspace/${workspace}/agent/${agentId}`)
+    .then((res) => res.json())
+    .then((agent) => {
+      const root = createRoot(appContainer);
+      root.render(<ChatWidget agent={agent} baseUrl={baseUrl} />);
+    })
+    .catch((err) => {
+      console.error("Widget: failed to load agent", err);
+    });
+})()
 
-    const root = createRoot(container);
-    root.render(<ChatWidget agent={agent} baseUrl={baseUrl as string} />);
-  } catch (error) {
-    console.error("ChatWidget: Failed to load agent config", error);
-  }
-}
-
-init();

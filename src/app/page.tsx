@@ -54,9 +54,10 @@ export default function Home() {
             </p>
           </div>
 
-          <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl leading-tight">
-            Build your first AI <HeroText /> agent for your business in seconds with Juno
-          </h1>
+      <h1 className="max-w-4xl text-5xl font-bold md:text-6xl lg:text-7xl leading-tight">
+          Build your first AI <HeroText /> agent in seconds with Juno
+       </h1>
+
 
           <p className="mt-5 max-w-prose text-zinc-700 sm:text-lg">
             Turn conversations into conversions with AI agents built for your
@@ -94,19 +95,22 @@ export default function Home() {
                 />
               </div>
 
-              <div className="mx-auto mb-32 max-w-5xl px-6 lg:px-8 mt-[5rem]">
+              <div className="mx-auto  max-w-5xl px-6 lg:px-8 mt-[5rem]">
                 <div className="-m-2 rounded-xl  bg-gray-900/5 p-2 ring-1 ring-inset ring-gray-900/10 lg:-m-4 lg:rounded-2xl lg:p-4">
-                  <div className="w-full aspect-video">
-                    <video
-                      src="/JunoDemo.mp4"
-                      className="w-full h-full object-cover rounded-xl"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      preload="auto"
-                    />
-                  </div>
+   <div className="w-full max-w-6xl mx-auto rounded-2xl ring-1 ring-gray-200 overflow-hidden">
+  <video
+    src="/JunoDemo.mp4"
+    className="w-full h-auto object-contain"
+    autoPlay
+    loop
+    muted
+    playsInline
+    preload="auto"
+  />
+</div>
+
+
+
                 </div>
               </div>
             </div>
@@ -126,7 +130,7 @@ export default function Home() {
           </div>
         </div>
 
-        <section className="relative py-20 bg-gray-50">
+        <section className="relative py-20">
           <div className="container mx-auto px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">

@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, models } from "mongoose";
 export interface IAgent extends Document {
   name: string;
   role: string;
-  message: string;
+  welcomeMessage: string;
   instructions: string;
   label: string;
   placeholder: string;
@@ -29,7 +29,7 @@ const AgentSchema = new Schema<IAgent>(
   {
     name: { type: String, required: true },
     role: { type: String, required: true },
-    message: { type: String, required: true },
+    welcomeMessage: { type: String, required: true },
     instructions: { type: String, required: true },
     label: { type: String, required: true },
     placeholder: { type: String },

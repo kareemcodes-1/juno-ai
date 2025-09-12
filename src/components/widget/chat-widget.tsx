@@ -4,6 +4,7 @@ import { Bot, Mail, MessageCircle, MessageSquare, X } from "lucide-react";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { getSessionId } from "../../lib/session";
+import { createRoot } from "react-dom/client";
 
 type Message = { role: "user" | "bot"; content: string };
 
